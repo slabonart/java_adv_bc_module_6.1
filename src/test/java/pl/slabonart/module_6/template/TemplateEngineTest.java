@@ -1,4 +1,5 @@
-import static org.junit.jupiter.api.Assertions.*;
+package pl.slabonart.module_6.template;
+
 class TemplateEngineTest {
-  
+
 }
