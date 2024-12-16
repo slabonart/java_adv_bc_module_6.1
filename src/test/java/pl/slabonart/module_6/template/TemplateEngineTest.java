@@ -22,6 +22,7 @@ class TemplateEngineTest {
     private static final String SIMPLE_TEMPLATE_MESSAGE = "Hello #{subject} !!!";
     private static final String TWO_PLACEHOLDERS_TEMPLATE_MESSAGE = "Hello #{name}, #{subject} !!!";
     private static final Map<String, String> TEST_VALUES = Map.of("subject", "subject_value");
+    private static final Map<String, String> TEST_VALUES_2 = Map.of("subject", "subject_value", "name", "name_value");
     private static final String EXPECTED_MESSAGE = "Hello subject_value !!!";
     private static final String NO_NAME_VALUE_ERROR_MESSAGE = "Value for placeholder 'name' was not provided";
 
@@ -88,6 +89,31 @@ class TemplateEngineTest {
         assertEquals(NO_NAME_VALUE_ERROR_MESSAGE, exception.getMessage());
     }
 
+    @Test
+    void givenConsoleTemplateEngine_whenGenerateMessage_andPassUnknownValue_thenReturnProperMessage() throws ValueForPlaceholderNotProvidedException {
+
+        when(valuesLoader.loadValues()).thenReturn(TEST_VALUES_2);
+
+        Template template = new Template();
+        template.setMessage(SIMPLE_TEMPLATE_MESSAGE);
+
+        String message = consoleModeTemplateEngine.generateMessage(template, new Client());
+
+        assertEquals(EXPECTED_MESSAGE, message);
+    }
+
+    @Test
+    void givenFileTemplateEngine_whenGenerateMessage_andPassUnknownValue_thenReturnProperMessage() throws ValueForPlaceholderNotProvidedException {
+
+        when(valuesLoader.loadValues()).thenReturn(TEST_VALUES_2);
+
+        Template template = new Template();
+        template.setMessage(SIMPLE_TEMPLATE_MESSAGE);
+
+        String message = fileModeTemplateEngine.generateMessage(template, new Client());
+
+        assertEquals(EXPECTED_MESSAGE, message);
+    }
 
 
 }
