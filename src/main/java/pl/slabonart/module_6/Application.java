@@ -1,6 +1,7 @@
 package pl.slabonart.module_6;
 
 import pl.slabonart.module_6.client.Client;
+import pl.slabonart.module_6.exception.ValueForPlaceholderNotProvidedException;
 import pl.slabonart.module_6.sender.FileSender;
 import pl.slabonart.module_6.sender.MailServer;
 import pl.slabonart.module_6.template.ConsoleModeTemplateEngine;
@@ -28,6 +29,10 @@ public class Application {
         Client client = new Client();
         client.setAddresses("default@gmail.com");
 
-        messenger.sendMessage(client, template);
+        try {
+            messenger.sendMessage(client, template);
+        } catch (ValueForPlaceholderNotProvidedException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
     }
 }
