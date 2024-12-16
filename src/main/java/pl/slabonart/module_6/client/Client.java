@@ -1,4 +1,4 @@
-package pl.slabonart.module_6;
+package pl.slabonart.module_6.client;
 
 public class Client {
 
