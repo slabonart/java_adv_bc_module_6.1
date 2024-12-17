@@ -1,24 +1,25 @@
 package pl.slabonart.module_6;
 
+import pl.slabonart.module_6.client.Client;
+import pl.slabonart.module_6.exception.ValueForPlaceholderNotProvidedException;
+import pl.slabonart.module_6.sender.MessageSender;
 import pl.slabonart.module_6.template.Template;
 import pl.slabonart.module_6.template.TemplateEngine;
 
 public class Messenger {
 
-    private MailServer mailServer;
+    private final MessageSender messageSender;
+    private final TemplateEngine templateEngine;
 
-    private TemplateEngine templateEngine;
-
-
-    public Messenger(MailServer mailServer,
+    public Messenger(MessageSender messageSender,
                      TemplateEngine templateEngine) {
-        this.mailServer = mailServer;
+        this.messageSender = messageSender;
         this.templateEngine = templateEngine;
     }
 
-    public void sendMessage(Client client, Template template) {
-        String messageContent =
-                templateEngine.generateMessage(template, client);
-        mailServer.send(client.getAddresses(), messageContent);
+    public void sendMessage(Client client, Template template) throws ValueForPlaceholderNotProvidedException {
+        String messageContent = templateEngine.generateMessage(template, client);
+        messageSender.send(client.getAddresses(), messageContent);
     }
+
 }

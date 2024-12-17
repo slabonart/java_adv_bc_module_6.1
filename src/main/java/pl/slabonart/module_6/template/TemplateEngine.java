@@ -1,10 +1,9 @@
 package pl.slabonart.module_6.template;
 
-import pl.slabonart.module_6.Client;
+import pl.slabonart.module_6.client.Client;
+import pl.slabonart.module_6.exception.ValueForPlaceholderNotProvidedException;
 
-public class TemplateEngine {
+public interface TemplateEngine {
 
-    public String generateMessage(Template template, Client client) {
-        return null;
-    }
+    String generateMessage(Template template, Client client) throws ValueForPlaceholderNotProvidedException;
 }
