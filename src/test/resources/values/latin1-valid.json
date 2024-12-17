@@ -1,0 +1,9 @@
+{
+  "key1": "value1",
+  "keyÉ": "valÜe",
+  "name": "Jöhn Dœ",
+  "greeting": "¡Hola, señor!",
+  "currency": "€ 100, £ 50, ¥ 30",
+  "symbols": "© ® ß æ ø",
+  "quote": "“Hello, World!”"
+}
