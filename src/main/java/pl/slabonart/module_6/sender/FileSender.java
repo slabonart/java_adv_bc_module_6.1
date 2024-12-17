@@ -9,19 +9,23 @@ import java.nio.file.Paths;
 
 public class FileSender implements MessageSender {
 
-    private static final String MESSAGES_PATH = "src/main/resources/messages";
     private static final String MESSAGE_SUCCESSFULLY_SAVED = "Message successfully saved to: ";
     private static final String FAILED_TO_SEND_THE_MESSAGE = "Failed to send the message: ";
+    private String messagesPath = "src/main/resources/messages";
     private final String messageFilename;
 
     public FileSender(String messageFilename) {
         this.messageFilename = messageFilename;
     }
 
+    public void setMessagesPath(String messagesPath) {
+        this.messagesPath = messagesPath;
+    }
+
     @Override
     public void send(String destination, String message) {
 
-        Path messagesDirectory = Paths.get(MESSAGES_PATH);
+        Path messagesDirectory = Paths.get(messagesPath);
         try {
             if (!Files.exists(messagesDirectory)) {
                 Files.createDirectories(messagesDirectory);

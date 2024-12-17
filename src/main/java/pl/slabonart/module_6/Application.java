@@ -28,8 +28,7 @@ public class Application {
         Template template = new Template();
         template.setMessage("Hello world and #{message} !!!");
 
-        Client client = new Client();
-        client.setAddresses("default@gmail.com");
+        Client client = new Client("default@gmail.com");
 
         try {
             messenger.sendMessage(client, template);

@@ -12,7 +12,9 @@ import pl.slabonart.module_6.sender.MessageSender;
 import pl.slabonart.module_6.template.Template;
 import pl.slabonart.module_6.template.TemplateEngine;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -24,6 +26,7 @@ class MessengerTest {
 
     private static final String ERROR_MESSAGE = "Value for placeholder 'message' was not provided";
     private static final String TEST_MESSAGE = "test message";
+    private static final String TEST_CLIENT_ADDRESS = "test@gmail.com";
 
     @Spy
     MessageSender messageSender;
@@ -39,7 +42,7 @@ class MessengerTest {
 
         when(templateEngine.generateMessage(any(), any())).thenReturn(TEST_MESSAGE);
 
-        messenger.sendMessage(new Client(), new Template());
+        messenger.sendMessage(new Client(TEST_CLIENT_ADDRESS), new Template());
 
         verify(messageSender, times(1)).send(any(), any());
     }
@@ -49,7 +52,7 @@ class MessengerTest {
 
         when(templateEngine.generateMessage(any(), any())).thenThrow(new ValueForPlaceholderNotProvidedException("message"));
 
-        Exception exception = assertThrows(Exception.class, () ->  messenger.sendMessage(new Client(), new Template()));
+        Exception exception = assertThrows(Exception.class, () -> messenger.sendMessage(new Client(TEST_CLIENT_ADDRESS), new Template()));
 
         assertInstanceOf(ValueForPlaceholderNotProvidedException.class, exception);
         assertEquals(ERROR_MESSAGE, exception.getMessage());

@@ -6,12 +6,17 @@ import java.util.Scanner;
 
 public class ConsoleValuesLoader implements ValuesLoader {
 
+    private Scanner scanner = new Scanner(System.in);
+
+    public void setScanner(Scanner scanner) {
+        this.scanner = scanner;
+    }
+
     @Override
     public Map<String, String> loadValues() {
 
         Map<String, String> values = new HashMap<>();
 
-        Scanner scanner = new Scanner(System.in);
         String continueInput;
         int count = 1;
 

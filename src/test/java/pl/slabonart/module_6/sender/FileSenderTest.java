@@ -1,16 +1,14 @@
 package pl.slabonart.module_6.sender;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -18,45 +16,47 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class FileSenderTest {
 
-    private static final String MESSAGES_PATH = "src/main/resources/messages";
-    private static final String TEST_FILE_NAME = "testMessage";
-    private FileSender fileSender;
-
-    @BeforeEach
-    void setUp() {
-        fileSender = new FileSender(TEST_FILE_NAME);
-    }
-
-    @AfterEach
-    void tearDown() throws IOException {
-        Path filePath = Paths.get(MESSAGES_PATH, TEST_FILE_NAME + ".txt");
-        Files.deleteIfExists(filePath);
-
-        Path messagesDirectory = Paths.get(MESSAGES_PATH);
-        if (Files.isDirectory(messagesDirectory) && Files.list(messagesDirectory).findAny().isEmpty()) {
-            Files.delete(messagesDirectory);
-        }
-    }
+    @TempDir
+    static Path tempDir;
 
     @ParameterizedTest
-    @MethodSource("getLatinStrings")
-    void whenSenderWritesFileWithLatin1Encoding_thenProperContentSaved(String input) throws IOException {
+    @CsvSource({
+            "file1, '^@^A^B^C^D^E^F^G^H^I^J^K^L^M^N^O^P^Q^R^S^T^U^V^W^X^Y^Z^[^\\^^^^_]'",
+            "file2, ¡¢£¤¥¦§¨©ª«¬®¯°±²³´µ¶·¸¹º»¼½¾¿'",
+            "file3, 'ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ'"
+    })
+    void whenSaveFileWithLatinContent_thenSuccess(String fileName, String fileContent) throws IOException {
 
-        fileSender.send(TEST_FILE_NAME, input);
+        FileSender fileSender = new FileSender(fileName);
+        fileSender.setMessagesPath(tempDir.resolve("") + "/");
 
-        Path filePath = Paths.get(MESSAGES_PATH, TEST_FILE_NAME + ".txt");
+        fileSender.send(fileName, fileContent);
+
+        Path filePath = tempDir.resolve(fileName + ".txt");
+
         assertTrue(Files.exists(filePath), "File should be created.");
 
-        byte[] fileBytes = Files.readAllBytes(filePath);
-        String fileContent = new String(fileBytes, StandardCharsets.ISO_8859_1);
-        assertEquals(input, fileContent, "File content should match the original message.");
+        String content = readFileContent(filePath);
+        assertEquals(content, fileContent, "File content should match the original message.");
     }
 
-    private static Stream<String> getLatinStrings() {
-        return Stream.of(
-                "^@^A^B^C^D^E^F^G^H^I^J^K^L^M^N^O^P^Q^R^S^T^U^V^W^X^Y^Z^[^\\^^^^_]",
-                " ¡¢£¤¥¦§¨©ª«¬®¯°±²³´µ¶·¸¹º»¼½¾¿",
-                "ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ"
-        );
+    @Test
+    void whenMessagePathDoesNotExits_thenCreateItAndSSaveFile() throws IOException {
+        FileSender fileSender = new FileSender("test_file");
+        fileSender.setMessagesPath(tempDir.resolve("") + "/test/");
+
+        fileSender.send("test_file", "fileContent");
+
+        Path filePath = tempDir.resolve( "test/test_file.txt");
+        assertTrue(Files.exists(filePath), "File should be created.");
+
+        String content = readFileContent(filePath);
+        assertEquals("fileContent", content,  "File content should match the original message.");
     }
+
+    private String readFileContent(Path filePath) throws IOException {
+        byte[] fileBytes = Files.readAllBytes(filePath);
+        return new String(fileBytes, StandardCharsets.ISO_8859_1);
+    }
+
 }

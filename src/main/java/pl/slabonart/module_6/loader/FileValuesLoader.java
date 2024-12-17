@@ -12,9 +12,9 @@ import java.util.Map;
 
 public class FileValuesLoader implements ValuesLoader {
 
-    private static final String FILE_PATH = "src/main/resources/values/";
-    private static final String FILE_EXTENSION= ".json";
+    private static final String FILE_EXTENSION = ".json";
     private static final String ERROR_WHILE_LOADING_VALUES_MESSAGE = "Error while loading values from file: ";
+    private String filePath = "src/main/resources/values/";
 
     private final String fileName;
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -23,9 +23,13 @@ public class FileValuesLoader implements ValuesLoader {
         this.fileName = fileName;
     }
 
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
+    }
+
     @Override
     public Map<String, String> loadValues() {
-        try (InputStream inputStream = new FileInputStream(FILE_PATH + fileName + FILE_EXTENSION)){
+        try (InputStream inputStream = new FileInputStream(filePath + fileName + FILE_EXTENSION)) {
             InputStreamReader reader = new InputStreamReader(inputStream, StandardCharsets.ISO_8859_1);
             return objectMapper.readValue(reader, Map.class);
         } catch (IOException e) {
